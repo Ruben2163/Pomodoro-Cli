@@ -73,6 +73,25 @@ brew tap yourorg/pomodoro
 brew install pomodoro
 ```
 
+## Install via Homebrew Tap
+
+You (or users) can install Pomodoro CLI directly from your tap:
+
+```sh
+brew tap ruben2163/pomodoro
+brew install pomodoro
+```
+
+If you update the formula or binary, users can upgrade with:
+
+```sh
+brew upgrade pomodoro
+```
+
+**Note:**  
+- The tap repo must be public and contain the `pomodoro.rb` formula.
+- The formula's `url` and `sha256` must match your latest GitHub release binary.
+
 ## Usage
 
 ```sh
