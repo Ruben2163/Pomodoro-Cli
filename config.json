@@ -1,0 +1,11 @@
+{
+  "work": 20,
+  "break": 10,
+  "cycles": 4,
+  "long_break": 20,
+  "beep": true,
+  "theme": {
+    "bar_color": "\u001b[34m",
+    "text_color": "\u001b[36m"
+  }
+}
