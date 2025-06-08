@@ -82,11 +82,11 @@ let pomodoro ~work ~break_ ~cycles ~long_break ~beep_enabled ~theme =
   let total_work = ref 0 in
   let total_break = ref 0 in
   for c = 1 to cycles do
-    Printf.printf "%s\nCycle %d: Work!%s\n" theme.text_color c "\027[0m";
+    Printf.printf "%s\nCycle %d: Work%s\n" theme.text_color c "\027[0m";
     countdown work "Work" beep_enabled theme;
     total_work := !total_work + work;
     if c < cycles then begin
-      Printf.printf "%sTime for a break!%s\n" theme.text_color "\027[0m";
+      Printf.printf "%sTime for a break%s\n" theme.text_color "\027[0m";
       countdown break_ "Break" beep_enabled theme;
       total_break := !total_break + break_
     end
