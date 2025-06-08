@@ -1,1 +1,1 @@
-ocamlfind ocamlopt -linkpkg -package yojson,unix -ccopt "-static-libgcc -static-libstdc++" main.ml -o pomodoro
+ocamlfind ocamlopt -linkpkg -package yojson,unix main.ml -o pomodoro
