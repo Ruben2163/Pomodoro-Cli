@@ -1,125 +1,58 @@
 # Pomodoro CLI
 
-A fast, themeable Pomodoro timer for your terminal, written in OCaml.
+## Make `pomodoro` Available Anywhere
 
-## Features
-
-- Configurable work, break, and long break durations
-- Progress bar with color themes
-- Optional beep notification
-- Config file support
-- Homebrew installable
-
-## Installation
-
-### 1. Build from Source
-
-First, install OCaml and opam if you don't have them:
-
-```sh
-brew install ocaml opam
-```
-
-Install dependencies:
-
-```sh
-opam install yojson
-```
-
-Build the binary:
-
-```sh
-./build.sh
-```
-
-Copy the binary to your PATH (user-wide):
+After building, move the binary to a directory in your `PATH`:
 
 ```sh
 mkdir -p ~/.local/bin
 cp pomodoro ~/.local/bin/
 ```
 
-Make sure `~/.local/bin` is in your PATH.
-
-#### Build a Static Binary (Recommended for Homebrew)
-
-To ensure your binary works on most macOS systems, build statically:
+Ensure `~/.local/bin` is in your `PATH`.  
+Add this to your shell config (`~/.zshrc`, `~/.bashrc`, or `~/.bash_profile`):
 
 ```sh
-opam install yojson ocamlfind
-ocamlfind ocamlopt -linkpkg -package yojson,unix -ccopt "-static-libgcc -static-libstdc++" main.ml -o pomodoro
+export PATH="$HOME/.local/bin:$PATH"
 ```
 
-### 2. Install via Homebrew (Recommended for Users)
-
-#### Using a Homebrew Tap
-
-1. **Build a release binary** (see above).
-2. **Create a GitHub Release** and upload your `pomodoro` binary.
-3. **Update the Homebrew formula** (`pomodoro.rb`) with the correct URL and SHA256.
-4. **Host the formula** in a tap repo (e.g., `yourorg/homebrew-pomodoro`).
-
-Users can then install with:
+Reload your shell config:
 
 ```sh
-brew tap yourorg/pomodoro
-brew install pomodoro
+source ~/.zshrc   # or source ~/.bashrc
 ```
 
-#### Example (after you publish):
-
-```sh
-brew tap yourorg/pomodoro
-brew install pomodoro
-```
-
-## Install via Homebrew Tap
-
-You (or users) can install Pomodoro CLI directly from your tap:
-
-```sh
-brew tap ruben2163/pomodoro
-brew install pomodoro
-```
-
-If you update the formula or binary, users can upgrade with:
-
-```sh
-brew upgrade pomodoro
-```
-
-**Note:**  
-- The tap repo must be public and contain the `pomodoro.rb` formula.
-- The formula's `url` and `sha256` must match your latest GitHub release binary.
+Now you can run `pomodoro` from any directory in your terminal.
 
 ## Usage
 
 ```sh
-pomodoro [--config FILE] [--work N] [--break N] [--cycles N] [--long-break N] [--beep]
+pomodoro [OPTIONS]
 ```
 
-- `--config FILE` : Path to config file (default: `config.json`)
-- `--work N` : Work duration in minutes
-- `--break N` : Break duration in minutes
-- `--cycles N` : Number of cycles
-- `--long-break N` : Long break in minutes
-- `--beep` : Beep at end of each timer
+## Options
 
-### Example
-
-```sh
-pomodoro --work 20 --break 5 --cycles 4 --long-break 15 --beep
+```
+--config FILE      Config file (default config.json)
+--work N           Work duration in minutes
+--break N          Break duration in minutes
+--cycles N         Number of cycles
+--long-break N     Long break in minutes
+--beep              Beep at end of each timer
 ```
 
-Or with a config file:
+## Example
 
 ```sh
-pomodoro --config ~/.config/pomodoro-cli/config.json
+pomodoro --work 25 --break 5 --cycles 4 --long-break 15 --beep
 ```
 
 ## Configuration
 
-You can use a JSON config file to set defaults and theme:
+By default, Pomodoro CLI looks for a config file at `~/.pomoconfig.json`.  
+You can override this with `--config FILE`.
+
+Example `~/.pomoconfig.json`:
 
 ```json
 {
@@ -127,119 +60,55 @@ You can use a JSON config file to set defaults and theme:
   "break": 5,
   "cycles": 4,
   "long_break": 15,
-  "beep": true,
+  "beep": false,
   "theme": {
-    "bar_color": "\u001b[34m",
-    "text_color": "\u001b[36m"
+    "bar_color": "\u001b[32m",
+    "text_color": "\u001b[0m"
   }
 }
 ```
 
-## Themes
+## Theme
 
-Customize `bar_color` and `text_color` in your config using ANSI color codes.
+You can customize the theme colors using ANSI color codes. For example:
 
-- Red: `\u001b[31m`
-- Green: `\u001b[32m`
-- Yellow: `\u001b[33m`
-- Blue: `\u001b[34m`
-- Magenta: `\u001b[35m`
-- Cyan: `\u001b[36m`
-- Reset: `\u001b[0m`
-
-## Development
-
-To build:
-
-```sh
-opam install yojson
-./build.sh
+```json
+"theme": {
+  "bar_color": "\u001b[34m",
+  "text_color": "\u001b[36m"
+}
 ```
 
-## Homebrew Formula
+## Build
 
-See [`pomodoro.rb`](./pomodoro.rb) for a sample Homebrew formula.
+To build `pomodoro`, run:
 
-To create or update the formula:
+```sh
+ocamlfind ocamlopt -linkpkg -package yojson,unix main.ml -o pomodoro
+```
 
-1. Download your release binary and compute its SHA256:
+## Install
 
-   ```sh
-   shasum -a 256 pomodoro
-   ```
+To install `pomodoro`, you can use the provided `pomodoro.rb` formula for Homebrew:
 
-2. Edit `pomodoro.rb` with the new URL and SHA256.
+```ruby
+class Pomodoro < Formula
+  desc "Fast, themeable Pomodoro timer for your terminal (OCaml)"
+  homepage "https://github.com/ruben2163/pomodoro-cli"
+  url "https://github.com/ruben2163/pomodoro-cli/releases/download/v1.0.0/pomodoro"
+  sha256 "f91acb9347f8f74543ce88fb7e0052d3e6f2967fffa3a1f9db3fa5163a29d6a4"
+  version "1.0.0"
 
-3. Commit and push to your tap repo.
+  def install
+    bin.install "pomodoro"
+  end
 
-4. Test with:
-
-   ```sh
-   brew install --build-from-source ./pomodoro.rb
-   ```
-
-## Step-by-step Homebrew Release Guide
-
-If you have never published a Homebrew formula before, follow these steps:
-
-### 1. Build a Static Release Binary
-
-- Make sure you are on macOS and have OCaml, opam, and dependencies installed.
-- Run:
-  ```sh
-  opam install yojson ocamlfind
-  ocamlfind ocamlopt -linkpkg -package yojson,unix -ccopt "-static-libgcc -static-libstdc++" main.ml -o pomodoro
-  ```
-- This creates a `pomodoro` binary in your project directory.
-
-### 2. Create a GitHub Release
-
-- Go to your GitHub repo (e.g., `https://github.com/ruben2163/pomodoro-cli`).
-- Click "Releases" → "Draft a new release".
-- Set the tag (e.g., `v1.0.0`), title, and description.
-- Upload the `pomodoro` binary as a release asset.
-- Publish the release.
-
-### 3. Get the Download URL and SHA256
-
-- After publishing, right-click the `pomodoro` binary in the release and "Copy link address".
-- Download the binary to your computer and run:
-  ```sh
-  shasum -a 256 pomodoro
-  ```
-- Copy the resulting SHA256 hash.
-
-### 4. Update the Homebrew Formula
-
-- Edit `pomodoro.rb`:
-  - Set the `url` to the GitHub release asset URL.
-  - Set the `sha256` to the hash you just copied.
-
-### 5. Create a Homebrew Tap Repository
-
-- On GitHub, create a new repo named `homebrew-pomodoro` (or similar).
-- Copy your updated `pomodoro.rb` into this repo.
-
-### 6. Push the Formula
-
-- Commit and push `pomodoro.rb` to your tap repo.
-
-### 7. Test the Formula
-
-- On any Mac, run:
-  ```sh
-  brew tap ruben2163/pomodoro
-  brew install pomodoro
-  ```
-- Or, for local testing:
-  ```sh
-  brew install --build-from-source ./pomodoro.rb
-  ```
-
-### 8. Update and Maintain
-
-- For new releases, repeat steps 1–4 with the new binary and version.
+  test do
+    system "#{bin}/pomodoro", "--help"
+  end
+end
+```
 
 ## License
 
-Commercial use allowed. See LICENSE for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

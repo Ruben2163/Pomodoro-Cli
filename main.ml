@@ -99,9 +99,18 @@ let pomodoro ~work ~break_ ~cycles ~long_break ~beep_enabled ~theme =
     (!total_work / 60) (!total_break / 60) (long_break / 60)
     "\027[0m"
 
+let get_default_config_path () =
+  try
+    let home =
+      try Sys.getenv "HOME"
+      with Not_found -> Filename.dirname (Sys.executable_name)
+    in
+    Filename.concat home ".pomoconfig.json"
+  with _ -> "config.json"
+
 let () =
   let config = ref default_config in
-  let config_file = ref "config.json" in
+  let config_file = ref (get_default_config_path ()) in
   let work = ref None in
   let break_ = ref None in
   let cycles = ref None in
