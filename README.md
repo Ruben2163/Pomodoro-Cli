@@ -47,7 +47,7 @@ To ensure your binary works on most macOS systems, build statically:
 
 ```sh
 opam install yojson ocamlfind
-ocamlfind ocamlopt -linkpkg -package yojson,unix main.ml -o pomodoro
+ocamlfind ocamlopt -linkpkg -package yojson,unix -ccopt "-static-libgcc -static-libstdc++" main.ml -o pomodoro
 ```
 
 ### 2. Install via Homebrew (Recommended for Users)
@@ -158,6 +158,68 @@ To create or update the formula:
    ```sh
    brew install --build-from-source ./pomodoro.rb
    ```
+
+## Step-by-step Homebrew Release Guide
+
+If you have never published a Homebrew formula before, follow these steps:
+
+### 1. Build a Static Release Binary
+
+- Make sure you are on macOS and have OCaml, opam, and dependencies installed.
+- Run:
+  ```sh
+  opam install yojson ocamlfind
+  ocamlfind ocamlopt -linkpkg -package yojson,unix -ccopt "-static-libgcc -static-libstdc++" main.ml -o pomodoro
+  ```
+- This creates a `pomodoro` binary in your project directory.
+
+### 2. Create a GitHub Release
+
+- Go to your GitHub repo (e.g., `https://github.com/ruben2163/pomodoro-cli`).
+- Click "Releases" → "Draft a new release".
+- Set the tag (e.g., `v1.0.0`), title, and description.
+- Upload the `pomodoro` binary as a release asset.
+- Publish the release.
+
+### 3. Get the Download URL and SHA256
+
+- After publishing, right-click the `pomodoro` binary in the release and "Copy link address".
+- Download the binary to your computer and run:
+  ```sh
+  shasum -a 256 pomodoro
+  ```
+- Copy the resulting SHA256 hash.
+
+### 4. Update the Homebrew Formula
+
+- Edit `pomodoro.rb`:
+  - Set the `url` to the GitHub release asset URL.
+  - Set the `sha256` to the hash you just copied.
+
+### 5. Create a Homebrew Tap Repository
+
+- On GitHub, create a new repo named `homebrew-pomodoro` (or similar).
+- Copy your updated `pomodoro.rb` into this repo.
+
+### 6. Push the Formula
+
+- Commit and push `pomodoro.rb` to your tap repo.
+
+### 7. Test the Formula
+
+- On any Mac, run:
+  ```sh
+  brew tap ruben2163/pomodoro
+  brew install pomodoro
+  ```
+- Or, for local testing:
+  ```sh
+  brew install --build-from-source ./pomodoro.rb
+  ```
+
+### 8. Update and Maintain
+
+- For new releases, repeat steps 1–4 with the new binary and version.
 
 ## License
 
